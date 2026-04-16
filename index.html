@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="om">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORO-CONNECT Pro: Mindaafi Guddina</title>
+    <style>
+        :root {
+            --diimaa: #FF0000;
+            --adii: #FFFFFF;
+            --gurraacha: #212529;
+            --magariisa: #1b5e20;
+            --boora: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: #dee2e6;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--adii);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border-top: 12px solid var(--diimaa);
+            border-bottom: 12px solid var(--gurraacha);
+            overflow: hidden;
+            height: fit-content;
+        }
+
+        .lang-bar {
+            display: flex;
+            justify-content: center;
+            background: #f1f3f5;
+            padding: 12px;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            border: 1px solid #ced4da;
+            background: white;
+            padding: 7px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .lang-btn.active { 
+            background: var(--diimaa); 
+            color: white; 
+            border-color: var(--diimaa);
+        }
+
+        .header { 
+            background: var(--gurraacha); 
+            color: white; 
+            padding: 30px 20px; 
+            text-align: center; 
+        }
+
+        .header h1 { margin: 0; font-size: 28px; letter-spacing: 2px; color: #ffeb3b; }
+        .header p { margin: 5px 0 0; opacity: 0.9; font-size: 14px; }
+
+        .content { padding: 25px; }
+
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 15px; color: #495057; }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--diimaa); }
+
+        .btn-calc {
+            width: 100%;
+            padding: 16px;
+            background: var(--diimaa);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255,0,0,0.3);
+            transition: 0.2s;
+        }
+
+        .btn-calc:active { transform: scale(0.98); }
+
+        #result-card {
+            margin-top: 25px;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .salary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .salary-card {
+            background: #f1f8e9;
+            border: 1px solid #c8e6c9;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .salary-card.next { background: #e3f2fd; border-color: #bbdefb; }
+
+        .salary-val { font-size: 18px; font-weight: 800; color: var(--magariisa); display: block; margin-top: 5px; }
+        .salary-card.next .salary-val { color: #0d47a1; }
+        
+        small { font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; }
+
+        .history-box {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 6px solid var(--gurraacha);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .history-box h4 { margin: 0 0 15px 0; color: var(--gurraacha); border-bottom: 1px solid #eee; padding-bottom: 10px; }
+
+        .item { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 10px 0; 
+            border-bottom: 1px dashed #eee; 
+            font-size: 14px; 
+        }
+
+        .active-year { color: var(--diimaa); font-weight: bold; }
+        .check-mark { color: var(--magariisa); font-weight: bold; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .footer { text-align: center; margin-top: 25px; font-size: 12px; color: #adb5bd; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="lang-bar">
+        <button class="lang-btn active" id="btn-om" onclick="switchLang('om')">Afaan Oromoo</button>
+        <button class="lang-btn" id="btn-am" onclick="switchLang('am')">አማርኛ</button>
+        <button class="lang-btn" id="btn-en" onclick="switchLang('en')">English</button>
+    </div>
+
+    <div class="header">
+        <h1 id="t-title">ORO-CONNECT</h1>
+        <p id="t-sub">Mindaafi Guddina Barsiisotaa</p>
+    </div>
+
+    <div class="content">
+        <div class="input-group">
+            <label id="t-l1">Bara Qacarrii (E.C):</label>
+            <input type="number" id="baraQacarrii" placeholder="fkn. 2010" min="1980" max="2018">
+        </div>
+
+        <div class="input-group">
+            <label id="t-l2">Sadarkaa Ammaa:</label>
+            <select id="sadarkaa">
+                <option value="11500">Level 8 (11,500)</option>
+                <option value="12566">Level 9 (12,566)</option>
+                <option value="13732">Level 10 (13,732)</option>
+                <option value="14983">Level 11 (14,983)</option>
+                <option value="16348" selected>Level 12 (16,348)</option>
+                <option value="17838">Level 13 (17,838)</option>
+                <option value="19464">Level 14 (19,464)</option>
+                <option value="21238">Level 15 (21,238)</option>
+                <option value="23173">Level 16 (23,173)</option>
+            </select>
+        </div>
+
+        <button class="btn-calc" onclick="calculate()" id="t-btn">SHALLAGI</button>
+
+        <div id="result-card">
+            <div class="salary-grid">
+                <div class="salary-card">
+                    <small id="t-res-curr">Ammaa (Net)</small>
+                    <span class="salary-val" id="netCurr">0.00</span>
+                </div>
+                <div class="salary-card next">
+                    <small id="t-res-next">Itti Aanu (Net)</small>
+                    <span class="salary-val" id="netNext">0.00</span>
+                </div>
+            </div>
+
+            <div class="history-box">
+                <h4 id="t-res3">Seenaa Guddinaa</h4>
+                <div id="steps"></div>
+            </div>
+        </div>
+
+        <div class="footer">© 2026 ORO-CONNECT | KABAJAAN BARSIISOTAAF A.G</div>
+    </div>
+</div>
+
+<script>
+    const levels = [11500, 12566, 13732, 14983, 16348, 17838, 19464, 21238, 23173, 25285];
+
+    const translations = {
+        om: { title: "ORO-CONNECT", sub: "Mindaafi Guddina Barsiisotaa", l1: "Bara Qacarrii (E.C):", l2: "Sadarkaa Ammaa:", btn: "TILMAAMI", resCurr: "Ammaa (Net)", resNext: "Itti Aanu (Net)", res3: "Seenaa Guddinaa", step: "Guddina", itti: "Itti guddatu", check: "✓ Guddatteerta" },
+        en: { title: "ORO-CONNECT", sub: "Teacher Salary & Promotion", l1: "Employment Year (E.C):", l2: "Current Level:", btn: "CALCULATE", resCurr: "Current (Net)", resNext: "After Promotion (Net)", res3: "Promotion History", step: "Promotion", itti: "Next Due", check: "✓ Promoted" },
+        am: { title: "ኦሮ-ኮኔክት", sub: "የመምህራን ደመወዝ እና እድገት", l1: "የተቀጠሩበት ዓ.ም:", l2: "የአሁኑ ደረጃ:", btn: "አስላ", resCurr: "የአሁኑ (Net)", resNext: "ከእድገት በኋላ (Net)", res3: "የዕድገት ሁኔታ", step: "እድገት", itti: "ቀጣይ እድገት", check: "✓ አግኝተዋል" }
+    };
+
+    let curLang = 'om';
+
+    // Load saved data
+    window.onload = () => {
+        const b = localStorage.getItem('last_bara');
+        const s = localStorage.getItem('last_sadarkaa');
+        if(b) document.getElementById('baraQacarrii').value = b;
+        if(s) document.getElementById('sadarkaa').value = s;
+    };
+
+    function switchLang(l) {
+        curLang = l;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + l).classList.add('active');
+        
+        const t = translations[l];
+        document.getElementById('t-title').innerText = t.title;
+        document.getElementById('t-sub').innerText = t.sub;
+        document.getElementById('t-l1').innerText = t.l1;
+        document.getElementById('t-l2').innerText = t.l2;
+        document.getElementById('t-btn').innerText = t.btn;
+        document.getElementById('t-res-curr').innerText = t.resCurr;
+        document.getElementById('t-res-next').innerText = t.resNext;
+        document.getElementById('t-res3').innerText = t.res3;
+
+        if(document.getElementById('result-card').style.display === 'block') calculate();
+    }
+
+    function getNet(gross) {
+        if(!gross || isNaN(gross)) return "0.00";
+        let pension = gross * 0.07;
+        let taxable = gross - pension;
+        let tax = 0;
+
+        if (taxable > 10900) tax = (taxable * 0.35) - 1500;
+        else if (taxable > 7800) tax = (taxable * 0.30) - 955;
+        else if (taxable > 5250) tax = (taxable * 0.25) - 565;
+        else if (taxable > 3200) tax = (taxable * 0.20) - 302.5;
+        else if (taxable > 1650) tax = (taxable * 0.15) - 142.5;
+        else if (taxable > 600) tax = (taxable * 0.10) - 60;
+
+        return (taxable - tax).toLocaleString(undefined, {minimumFractionDigits: 2}) + " ETB";
+    }
+
+    function calculate() {
+        const qacarrii = parseInt(document.getElementById('baraQacarrii').value);
+        const grossCurr = parseInt(document.getElementById('sadarkaa').value);
+        
+        if(!qacarrii || qacarrii > 2018) {
+            alert(curLang === 'om' ? "Maaloo bara qacarrii sirrii galchaa!" : "Please enter a valid year!");
+            return;
+        }
+
+        localStorage.setItem('last_bara', qacarrii);
+        localStorage.setItem('last_sadarkaa', grossCurr);
+
+        let nextGross = levels[levels.indexOf(grossCurr) + 1] || grossCurr;
+        
+        document.getElementById('netCurr').innerText = getNet(grossCurr);
+        document.getElementById('netNext').innerText = getNet(nextGross);
+
+        let baraAmmaa = 2018; 
+        let stepHtml = "";
+        let count = 0;
+        let lakk = qacarrii + 3;
+
+        while(lakk <= baraAmmaa + 3) {
+            count++;
+            let isPast = lakk <= baraAmmaa;
+            stepHtml += `
+                <div class="item ${!isPast ? 'active-year' : ''}">
+                    <span><b>${translations[curLang].step} ${count}:</b> Bara ${lakk}</span>
+                    <span class="${isPast ? 'check-mark' : ''}">${isPast ? translations[curLang].check : translations[curLang].itti}</span>
+                </div>`;
+            if(!isPast) break;
+            lakk += 3;
+        }
+
+        document.getElementById('steps').innerHTML = stepHtml;
+        document.getElementById('result-card').style.display = 'block';
+    }
+</script>
+</body>
+</html>
